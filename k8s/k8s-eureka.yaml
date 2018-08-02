@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1 
+kind: Deployment 
+metadata: 
+  name: cloud-eureka-server
+spec: 
+  replicas: 1
+  template: 
+    metadata: 
+      labels: 
+        name: cloud-eureka-server 
+    spec: 
+      containers: 
+        - name: cloud-eureka-server 
+          image: eureka:1.0.0 
+          imagePullPolicy: IfNotPresent
+          ports: 
+            - containerPort: 8888
+---
+apiVersion: v1 
+kind: Service
+metadata: 
+  name: cloud-eureka-server
+spec: 
+  ports: 
+    - port: 8888
+      targetPort: 8888
+      protocol: TCP 
+  selector: 
+    name: cloud-eureka-server
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: cloud-eureka-server
+spec:
+  rules:
+  - host: eureka.linux100.cc
+    http:
+      paths:
+      - backend:
+          serviceName: cloud-eureka-server
+          servicePort: 8888
